@@ -1,3 +1,6 @@
+# !/usr/bin/env python3
+
+
 class Singelton(type):
     _instances = {}
 
