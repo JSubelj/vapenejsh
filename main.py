@@ -17,13 +17,17 @@ def list_to_string(lst):
     return string
 
 if __name__ == "__main__":
+    import sys
+
+    print(hasattr(sys,"real_prefix"))
     MyStorage = Storage()
 
     nic = Nicotine(18, 10, 1.5)
     base = Base((50, 50), 1000, 15)
     nicbase = NicBase(base, nic, 100, no_of_shots=2)
 
-    lynchee = TFA_F("Lynchee")
+    TFA = Company("The Flavour Apprentice",3.95,15)
+    '''lynchee = TFA_F("Lynchee")
     pear = TFA_F("Pear")
 
     ingr = {"Lynchee": (4,"TFA"), "Pear": (6,"TFA")}
@@ -38,17 +42,17 @@ if __name__ == "__main__":
     MyStorage.add_recipe(rec)
     MyStorage.add_recipe(rec1)
     MyStorage.add_recipe(rec2)
-
+    '''
     #print(MyStorage.current[TFA()])
     #print(list_to_string(MyStorage.get_recepies()))
     #print(list_to_string(MyStorage.get_flavours()))
     #print(MyStorage.current)
-    MyStorage.create_recipe(rec1,10)
+    #MyStorage.create_recipe(rec1,10)
     #print(list_to_string(MyStorage.get_current()))
     #print(list_to_string(MyStorage.get_companies()))
     import json
-    #print(json.loads(MyStorage.jsonify_companies()))
+    #print(json.dumps(json.loads(MyStorage.jsonify_companies()),indent=4,sort_keys=True))
     #print(json.loads(MyStorage.jsonify_flavours()))
     #print(json.loads(MyStorage.jsonify_recepies()))
-    print(json.loads(MyStorage.jsonify_current()))
+    #print(json.loads(MyStorage.jsonify_current()))
     #print(MyStorage.could_it_be_made(rec,100))

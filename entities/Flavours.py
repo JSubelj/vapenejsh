@@ -2,6 +2,8 @@
 
 from entities.Storage import Entity, StorageEntity
 from entities.Singelton import Singelton
+import json
+
 
 class Flavour(Entity):
     def __init__(self, company, name, price, quantity):
@@ -29,8 +31,10 @@ class FlavourStorage(StorageEntity):
                           sort_keys=True, indent=4)
 
 class Company:
-    def __init__(self,name):
+    def __init__(self,name,price=None,volume=None):
         self.company_name = name
+        self.spawn_class_for_flavours(name,price,volume)
+        TFA_F("lbgit")
 
     def __str__(self):
         return self.company_name
@@ -39,13 +43,39 @@ class Company:
         import json
         return json.dumps(self, default=lambda o: o.__dict__,
                           sort_keys=True, indent=4)
-def TFA():
-    return Company("The Flavour Apprentice")
 
+
+
+    def constructor_for_flavours(self, name, price=None, volume=None):
+        super().__init__(self.company, name, price if price else self.price,
+                                      volume if volume else self.volume)
+
+    def spawn_class_for_flavours(self, company_name: str,price=None,volume=None):
+        split_c_name = company_name.split(" ")
+
+        if len(split_c_name) == 1:
+            class_name=company_name+"_F"
+        else:
+            class_name=""
+            for w in split_c_name:
+                class_name+=w[0].capitalize()
+            class_name+="_F"
+        globals()[class_name] = type(class_name,(Flavour,),{
+                        "price": price,
+                        "volume": volume,
+                        "company": self,
+                        "__init__": self.constructor_for_flavours,
+                        "__str__": lambda self: super(class_name,self).__str__(),
+                        "toJSON": lambda self: json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
+                    })
+
+
+
+'''
 class TFA_F(Flavour):
     price = 3.95
     volume = 15
-    company = TFA()
+    company = Company("The Flavour Apprentice")
 
     # Flavour apprentice
     def __init__(self, name, price=None, volume=None):
@@ -57,11 +87,10 @@ class TFA_F(Flavour):
         return super().__str__()
 
     def toJSON(self):
-        import json
         return json.dumps(self, default=lambda o: o.__dict__,
                           sort_keys=True, indent=4)
 
-
+'''
 
 
 
