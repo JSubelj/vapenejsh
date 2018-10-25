@@ -19,15 +19,14 @@ def list_to_string(lst):
 if __name__ == "__main__":
     import sys
 
-    print(hasattr(sys,"real_prefix"))
     MyStorage = Storage()
 
     nic = Nicotine(18, 10, 1.5)
     base = Base((50, 50), 1000, 15)
     nicbase = NicBase(base, nic, 100, no_of_shots=2)
 
-    TFA = Company("The Flavour Apprentice",3.95,15)
-    '''lynchee = TFA_F("Lynchee")
+    TFA, TFA_F, _ = Company("The Flavour Apprentice",3.95,15)
+    lynchee = TFA_F("Lynchee")
     pear = TFA_F("Pear")
 
     ingr = {"Lynchee": (4,"TFA"), "Pear": (6,"TFA")}
@@ -42,15 +41,21 @@ if __name__ == "__main__":
     MyStorage.add_recipe(rec)
     MyStorage.add_recipe(rec1)
     MyStorage.add_recipe(rec2)
-    '''
-    #print(MyStorage.current[TFA()])
-    #print(list_to_string(MyStorage.get_recepies()))
-    #print(list_to_string(MyStorage.get_flavours()))
-    #print(MyStorage.current)
-    #MyStorage.create_recipe(rec1,10)
-    #print(list_to_string(MyStorage.get_current()))
-    #print(list_to_string(MyStorage.get_companies()))
+
+    print(MyStorage.current[Company("The Flavour Apprentice")[0]])
+    print(list_to_string(MyStorage.get_recepies()))
+    print(list_to_string(MyStorage.get_flavours()))
+    print(MyStorage.current)
+    MyStorage.create_recipe(rec1,10)
+    print(list_to_string(MyStorage.get_current()))
+    print(list_to_string(MyStorage.get_companies()))
     import json
+    import pickle
+    with open("tmp.pck","wb") as f:
+        pickle.dump(MyStorage,f)
+    with open("tmp.pck","rb") as f:
+        MyStorage=pickle.load(f)
+
     #print(json.dumps(json.loads(MyStorage.jsonify_companies()),indent=4,sort_keys=True))
     #print(json.loads(MyStorage.jsonify_flavours()))
     #print(json.loads(MyStorage.jsonify_recepies()))

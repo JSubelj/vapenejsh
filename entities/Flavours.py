@@ -5,7 +5,7 @@ from entities.Singelton import Singelton
 import json
 
 
-class Flavour(Entity):
+class Flavour(Entity, object):
     def __init__(self, company, name, price, quantity):
         self.company = company
         self.name = name
@@ -30,12 +30,20 @@ class FlavourStorage(StorageEntity):
         return json.dumps(self, default=lambda o: o.__dict__,
                           sort_keys=True, indent=4)
 
-class Company:
+
+class _Company:
+    # should not be called
+    derived_flavour_classes={}
+    company_names={}
+
     def __init__(self,name,price=None,volume=None):
         self.company_name = name
-        self.spawn_class_for_flavours(name,price,volume)
-        TFA_F("lb")
+        self.company_names[name]=self
+        class_f, class_name =self.ClassFactory(self, price, volume)
+        self.derived_flavour_classes[name] = (class_f, class_name)
 
+    def return_derived_flavour_class(self,name):
+        return self.derived_flavour_classes[name]
 
     def __str__(self):
         return self.company_name
@@ -45,53 +53,35 @@ class Company:
         return json.dumps(self, default=lambda o: o.__dict__,
                           sort_keys=True, indent=4)
 
-
-
-    def constructor_for_flavours(self, name, price=None, volume=None):
-        super().__init__(self.company, name, price if price else self.price,
-                                      volume if volume else self.volume)
-
-    def spawn_class_for_flavours(self, company_name: str,price=None,volume=None):
-        split_c_name = company_name.split(" ")
+    @staticmethod
+    def ClassFactory(company, price=None,volume=None):
+        def __init__(self, name):
+            super(type(self), self).__init__(company, name, price if price else self.price,volume if volume else self.volume)
+        split_c_name = company.company_name.split(" ")
 
         if len(split_c_name) == 1:
-            class_name=company_name+"_F"
+            class_name=company.company_name
         else:
             class_name=""
             for w in split_c_name:
                 class_name+=w[0].capitalize()
-            class_name+="_F"
-        globals()[class_name] = type(class_name,(Flavour,),{
-                        "price": price,
-                        "volume": volume,
-                        "company": self,
-                        "__init__": self.constructor_for_flavours,
-                        "__str__": lambda self: super(class_name,self).__str__(),
-                        "toJSON": lambda self: json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
-                    })
+        class_name+="_F"
+
+        newclass = type(class_name, (Flavour,), {"__init__": __init__})
+        globals()[class_name] = newclass
+        return newclass, class_name
 
 
+def Company(name, price=None, volume=None):
+    if name in _Company.company_names.keys():
+        c = _Company.company_names[name]
+        dc, name = c.return_derived_flavour_class(name)
+        return c, dc, name
+    else:
+        c = _Company(name, price, volume)
+        dc, name = c.return_derived_flavour_class(name)
+        return c, dc, name
 
-'''
-class TFA_F(Flavour):
-    price = 3.95
-    volume = 15
-    company = Company("The Flavour Apprentice")
-
-    # Flavour apprentice
-    def __init__(self, name, price=None, volume=None):
-        _price = price if price else self.price
-        _volume = volume if volume else self.volume
-        super().__init__(self.company, name, _price, _volume)
-
-    def __str__(self) -> str:
-        return super().__str__()
-
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                          sort_keys=True, indent=4)
-
-'''
 
 
 

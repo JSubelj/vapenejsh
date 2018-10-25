@@ -33,8 +33,13 @@ class StorageEntity:
 from entities.Flavours import *
 
 class Storage:
-    # TODO: From json
     def __init__(self):
+        with open("tmp.pck", "rb") as f:
+            import pickle
+            # TODO: vsakič k se shran company zapiše to v pickle
+            self = pickle.load(f)
+            return
+
         self.current = {} # hierarchy: {Company: {Flavour: FlavourStorage}}
         self.recepies = {} # hierarchy: {recepie_name: {procentage: Recepie}}
         self.flavours = {} # hierarchy: {flavour.name+_+company_name: Flavour}
